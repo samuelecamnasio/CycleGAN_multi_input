@@ -1,7 +1,7 @@
 
 # In2I : Unsupervised Multi-Image-to-Image Translation Using Generative Adversarial Networks
 
-This code is the implementation of the paper, <i> In2I : Unsupervised Multi-Image-to-Image Translation Using Generative Adversarial Networks</i>. Implementation is based on the CycleGAN PyTorch code written by [Jun-Yan Zhu](https://github.com/junyanz) and [Taesung Park](https://github.com/taesung89). This implementation only supports the case with two input modalities.
+This code is the implementation of the paper, <i> In2I : Unsupervised Multi-Image-to-Image Translation Using Generative Adversarial Networks</i>. Implementation is based on the CycleGAN PyTorch code written by [Jun-Yan Zhu](https://github.com/junyanz) and [Taesung Park](https://github.com/taesung89). This implementation supports the case with two or three input modalities.
 
 
 
@@ -41,22 +41,12 @@ Year = {2018}
 
 This code was tested on a Ubuntu 16.04 installation with CUDA 9.0
 
-- Clone this repo:
-```bash
-git clone ttps://github.com/PramuPerera/In2I
-cd In2I-master
-```
-
 ### 
 - Download a multi-modal image dataset. Eg: EPFL NIR-VIS dataset can be found from <a href=https://ivrl.epfl.ch/supplementary_material/cvpr11/>here.</a>
 
 - Change the structure of image files. Inside the dataset directory there should be two folders, trainA and trainB, where images of input and output modalities are stored respectivly. Input images are arranged by vertically appending both modalities correspoinding to a given image (similar to how input data are prepared in pix2pix code). Following is an example of how images should be prepared for NIR+grey to RGB task:
 
 <img src="images/imex.jpg" width="900px"/>
-
-Note that trainA image is a concatanation of NIR and greyscale images. trainB image is an RGB image. Converting input data into the said format can be done using the genDATA.py script. Change lines 12-14 to specify locations of first and second modality. Use variable destination to specify the output directory (Default is datasets/NIRtoVIS).
-
-- For NIR+greyscale to RGB task in EPFT dataset, data preparation can be done by running genDATANIR.py script. Path to all files of the dataset should be specified by setting the <i>dataset</i> variable.
 
 - Train a model:
 ```
