@@ -1,63 +1,40 @@
 
 # In2I : Unsupervised Multi-Image-to-Image Translation Using Generative Adversarial Networks
 
-This code is the implementation of the paper, <i> In2I : Unsupervised Multi-Image-to-Image Translation Using Generative Adversarial Networks</i>. Implementation is based on the CycleGAN PyTorch code written by [Jun-Yan Zhu](https://github.com/junyanz) and [Taesung Park](https://github.com/taesung89). This implementation supports the case with two or three input modalities.
+This code is the implementation of the paper, <i> In2I : Unsupervised Multi-Image-to-Image Translation Using Generative Adversarial Networks</i>. Implementation is based on the CycleGAN PyTorch code written by [Jun-Yan Zhu](https://github.com/junyanz) and [Taesung Park](https://github.com/taesung89). Implementation for the traslation of MRI to CT with two or three input modalities.
 
 
 
 #### In2I : [[Project]](https://github.com/PramuPerera/In2I) [[Paper]](https://arxiv.org/abs/1711.09334)
 
 
-This work, given a set of paired images from multiple modalities, a transformation is learned to translate the input into a specified domain. Sample constructions from NIR+Greyscale images to color images. 
-<img src="images/col2.jpg" width="900px"/>
-
-
-Sample constructions from Synthetic RGB+depth images to real color images.
- 
-<img src="images/syn2real2.jpg" width="900px"/>
-
-In both cases, a multi-modal Generator is used for both forward and reverse transformations. The network structure used is illustrates in the following figure:
-
-<img src="images/Archi4Gen.jpg" width="900px"/>
-
-If you use this code for your research, please cite:
-
-<pre><code>
-@inproceedings{in2i,
-author = {{Perera}, P. and  {Abavisani}, M. and {Patel}, V.~M.},
-title = "{I2I : Unsupervised Multi-Image-to-Image Translation Using Generative Adversarial Networks}",
-Booktitle = {24th International Conference on Pattern Recognition, ICPR 2018},
-Year = {2018}
-}
-</code></pre>
-
-
-## Prerequisites
-- Linux or macOS
-- Python 2 or 3
-- Pytorch
-- Python packaged NumPy, SciPy, Visdom and Dominate 
-- CPU or NVIDIA GPU + CUDA CuDNN
-
-This code was tested on a Ubuntu 16.04 installation with CUDA 9.0
-
 ### 
-- Download a multi-modal image dataset. Eg: EPFL NIR-VIS dataset can be found from <a href=https://ivrl.epfl.ch/supplementary_material/cvpr11/>here.</a>
+2 input modalities: place MRI data in 2 folders: 'trainA_in' and 'trainA_out' for train, 'testA_in' and 'testA_out' for test
 
-- Change the structure of image files. Inside the dataset directory there should be two folders, trainA and trainB, where images of input and output modalities are stored respectivly. Input images are arranged by vertically appending both modalities correspoinding to a given image (similar to how input data are prepared in pix2pix code). Following is an example of how images should be prepared for NIR+grey to RGB task:
+3 input modalities: place MRI data in 3 folders: 'trainA_inT2', 'trainA_outT2' and 'trainA_t2' for train, 'testA_inT2', 'testA_outT2' and 'testA_t2' for test
 
-<img src="images/imex.jpg" width="900px"/>
+CT data in: 'trainB' and 'testB' folders
 
-- Train a model:
+different modalities of the same slice must have the same name and be placed in the proper folder
+
+- Train a model 2 input:
 ```
-python train.py --dataroot ./datasets/NIRtoVIS --name nirgreytovis --model cycle_gan --no_dropout --input_nc 1 --input_nc2 1 --output_nc 3
+!python train.py --dataroot ./datasets/MRI2CT_inOutJoin --name MRI2CT_inOutJoin --model cycle_gan --no_dropout --no_input 2 --input_nc 1 --input_nc2 1 --output_nc 3 --display_id 0 --niter 150 --niter_decay 50 
 ```
-- To view training results and loss plots, run `python -m visdom.server` and click the URL http://localhost:8097. To see more intermediate results, check out `./checkpoints/nirgreytovis/web/index.html`
-- Test the model:
+- Train a model 3 input:
 ```
-python test.py --dataroot ./datasets/NIRtoVIS --name nirgreytovis --model cycle_gan --phase test --no_dropout
+!python train.py --dataroot ./datasets/MRI2CT_inOutJoin --name MRI2CT_t2Join --model cycle_gan --no_dropout --no_input 3 --input_nc 1 --input_nc2 1 --output_nc 3 --display_id 0 --gpu_ids 1 --niter 150 --niter_decay 50 
 ```
-The test results will be saved to a html file here: `./results/nirgreytovis/latest_test/index.html`.
+- Test the model 2 input:
+```
+!python test.py --dataroot ./datasets/MRI2CT_inOutJoin/ --name MRI2CT_inOutJoin --phase test --no_input 2 --no_dropout --input_nc 1 --input_nc2 1 --output_nc 3 --how_many 1294 --preprocess resize --loadSize 256
+```
+- Test the model 3 input:
+```
+!python test.py --dataroot ./datasets/MRI2CT_inOutJoin/ --name MRI2CT_t2Join --phase test --no_input 3 --no_dropout --input_nc 1 --input_nc2 1 --output_nc 3 --how_many 1294 --preprocess resize --loadSize 256
+```
+
+The test results will be saved in the 'results' folder
 
 It should be noted that all arguments  are similar to that of CycleGAN PyTorch code. input_nc and input_nc2 specifies number of channels in each modality Generator architechture is based on ResNET and is fixed.   
 
